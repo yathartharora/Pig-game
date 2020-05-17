@@ -8,7 +8,7 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
 
 */
-var scores, roundScore,activePlayer,dice,gamePlaying;
+var scores, roundScore,activePlayer,dice1,dice2,gamePlaying,previous;
 
 
 init();
@@ -16,13 +16,22 @@ init();
 document.querySelector('.btn-roll').addEventListener('click', function btn(){
 
     if(gamePlaying){
-        dice = Math.floor(Math.random()*6 + 1);
-        var diceDOM = document.querySelector('.dice');
-        diceDOM.style.display = 'block';
-        diceDOM.src = 'dice-'+dice+'.png';
+        dice1 = Math.floor(Math.random()*6 + 1);
+        dice2 = Math.floor(Math.random()*6 + 1);
+        if(dice1===6 && dice2==6){
+          nextPlayer();
+        }
 
-        if(dice>1){
-        roundScore += dice;
+        document.getElementById('dice1').style.display = 'block';
+        document.getElementById('dice2').style.display = 'block';
+        document.getElementById('dice1').src = 'dice-'+dice1+'.png';
+        document.getElementById('dice2').src = 'dice-'+dice2+'.png';
+        /*var diceDOM = document.querySelector('.dice');
+        diceDOM.style.display = 'block';
+        diceDOM.src = 'dice-'+dice+'.png';*/
+
+        if(dice1>1 || dice2>1){
+        roundScore += (dice1 + dice2);
         document.querySelector('#current-'+ activePlayer).textContent = roundScore;
         } else{
           nextPlayer();
@@ -37,10 +46,17 @@ document.querySelector('.btn-roll').addEventListener('click', function btn(){
     if(gamePlaying){
 
         scores[activePlayer] += roundScore;
+        previous = 0;
+
+        var input = document.querySelector('.final-score').value;
+        if(input===0){
+          input = 100;
+        }
+
 
         document.querySelector('#score-'+activePlayer).textContent = scores[activePlayer];
 
-        if(scores[activePlayer]>=100){
+        if(scores[activePlayer]>=input){
           document.querySelector('#name-'+activePlayer).textContent = 'WINNER';
           document.querySelector('.dice').style.display = 'none';
           document.querySelector('.player-'+activePlayer+'-panel').classList.toggle('winner');
@@ -75,8 +91,10 @@ function init() {
   scores = [0,0];
   activePlayer = 0;
   roundScore = 0;
+  previous = 0;
   gamePlaying = true;
-  document.querySelector('.dice').style.display = 'none';
+  document.getElementById('dice1').style.display = 'none';
+  document.getElementById('dice2').style.display = 'none';
   document.getElementById('score-0').textContent = '0';
   document.getElementById('score-1').textContent = '0';
   document.getElementById('current-0').textContent = '0';
